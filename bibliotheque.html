@@ -1,0 +1,1468 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Ma Bibliothèque</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<style>
+  :root {
+    --bg: #070a12;
+    --bg-2: #0b1020;
+    --surface: rgba(15, 23, 42, 0.72);
+    --surface-solid: #101827;
+    --surface-soft: #172033;
+    --surface-hover: #1b2840;
+    --text: #f8fafc;
+    --text-soft: #cbd5e1;
+    --muted: #8fa1bb;
+    --line: rgba(148, 163, 184, 0.16);
+    --line-strong: rgba(148, 163, 184, 0.28);
+    --brand: #7c3aed;
+    --brand-2: #06b6d4;
+    --brand-3: #f97316;
+    --green: #22c55e;
+    --pink: #ec4899;
+    --danger: #fb7185;
+    --shadow-sm: 0 10px 28px rgba(0, 0, 0, 0.28);
+    --shadow-md: 0 22px 60px rgba(0, 0, 0, 0.38);
+    --shadow-lg: 0 34px 110px rgba(0, 0, 0, 0.58);
+    --glow-purple: 0 0 42px rgba(124, 58, 237, 0.28);
+    --glow-cyan: 0 0 42px rgba(6, 182, 212, 0.22);
+    --radius-xl: 24px;
+    --radius-lg: 18px;
+    --radius-md: 14px;
+    --speed: 220ms ease;
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    min-height: 100vh;
+    background:
+      radial-gradient(circle at 12% -8%, rgba(124, 58, 237, 0.34), transparent 34rem),
+      radial-gradient(circle at 88% 4%, rgba(6, 182, 212, 0.28), transparent 32rem),
+      radial-gradient(circle at 50% 48%, rgba(249, 115, 22, 0.08), transparent 28rem),
+      linear-gradient(180deg, #070a12 0%, #0b1020 45%, #080b14 100%);
+    color: var(--text);
+    font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: -1;
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.028) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.028) 1px, transparent 1px);
+    background-size: 44px 44px;
+    mask-image: linear-gradient(180deg, rgba(0,0,0,0.8), transparent 74%);
+  }
+
+  body.modal-open {
+    overflow: hidden;
+  }
+
+  a, button, input {
+    font: inherit;
+  }
+
+  button {
+    border: 0;
+  }
+
+  .app-shell {
+    width: min(1500px, calc(100% - 32px));
+    margin: 0 auto;
+  }
+
+  .hero {
+    padding: 34px 0 22px;
+  }
+
+  .hero-panel {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    border-radius: 32px;
+    background:
+      linear-gradient(135deg, rgba(15, 23, 42, 0.86), rgba(15, 23, 42, 0.58)),
+      radial-gradient(circle at 18% 15%, rgba(124, 58, 237, 0.26), transparent 24rem),
+      radial-gradient(circle at 92% 8%, rgba(6, 182, 212, 0.18), transparent 22rem);
+    box-shadow: var(--shadow-md), var(--glow-purple);
+    padding: clamp(24px, 4vw, 50px);
+    backdrop-filter: blur(24px);
+  }
+
+  .hero-panel::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(120deg, rgba(255,255,255,0.12), transparent 32%, transparent 68%, rgba(255,255,255,0.05));
+  }
+
+  .hero-panel::after {
+    content: "";
+    position: absolute;
+    width: 420px;
+    height: 420px;
+    right: -190px;
+    top: -220px;
+    border-radius: 50%;
+    background: conic-gradient(from 140deg, rgba(124, 58, 237, 0.45), rgba(6, 182, 212, 0.36), rgba(236, 72, 153, 0.24), rgba(124, 58, 237, 0.45));
+    filter: blur(8px);
+    opacity: 0.82;
+    pointer-events: none;
+  }
+
+  .hero-top {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 24px;
+  }
+
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    padding: 8px 12px;
+    border: 1px solid rgba(6, 182, 212, 0.26);
+    border-radius: 999px;
+    background: rgba(6, 182, 212, 0.1);
+    color: #a5f3fc;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    box-shadow: var(--glow-cyan);
+  }
+
+  .eyebrow-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--brand-2), var(--green));
+    box-shadow: 0 0 0 5px rgba(6, 182, 212, 0.13), 0 0 22px rgba(6, 182, 212, 0.8);
+  }
+
+  h1 {
+    margin-top: 18px;
+    max-width: 780px;
+    font-size: clamp(2.35rem, 5vw, 5.4rem);
+    line-height: 0.96;
+    letter-spacing: -0.075em;
+    font-weight: 850;
+  }
+
+  h1::after {
+    content: "";
+    display: block;
+    width: 150px;
+    height: 5px;
+    margin-top: 18px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, var(--brand), var(--brand-2), var(--brand-3));
+    box-shadow: 0 0 28px rgba(6, 182, 212, 0.35);
+  }
+
+  .hero-sub {
+    max-width: 700px;
+    margin-top: 18px;
+    color: var(--text-soft);
+    font-size: clamp(0.98rem, 2vw, 1.12rem);
+    line-height: 1.65;
+  }
+
+  .hero-stats {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(106px, 1fr));
+    gap: 12px;
+    min-width: min(420px, 100%);
+  }
+
+  .stat-card {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    background: rgba(2, 6, 23, 0.34);
+    box-shadow: var(--shadow-sm);
+    padding: 16px;
+  }
+
+  .stat-card::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto;
+    height: 3px;
+    background: linear-gradient(90deg, var(--brand), var(--brand-2), var(--pink));
+  }
+
+  .stat-value {
+    display: block;
+    font-size: 1.7rem;
+    font-weight: 850;
+    letter-spacing: -0.055em;
+  }
+
+  .stat-label {
+    display: block;
+    margin-top: 4px;
+    color: var(--muted);
+    font-size: 0.78rem;
+    font-weight: 700;
+  }
+
+  .toolbar {
+    position: sticky;
+    top: 12px;
+    z-index: 20;
+    margin: 18px 0 30px;
+    border: 1px solid var(--line);
+    border-radius: 24px;
+    background: rgba(8, 13, 26, 0.72);
+    box-shadow: var(--shadow-sm);
+    backdrop-filter: blur(22px);
+    padding: 12px;
+    display: grid;
+    grid-template-columns: minmax(240px, 1fr) auto;
+    gap: 12px;
+  }
+
+  .search-field {
+    position: relative;
+    min-width: 0;
+  }
+
+  .search-field svg {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--brand-2);
+    pointer-events: none;
+  }
+
+  .search-field input {
+    width: 100%;
+    height: 50px;
+    border: 1px solid rgba(148, 163, 184, 0.12);
+    border-radius: 16px;
+    outline: none;
+    background: rgba(15, 23, 42, 0.84);
+    color: var(--text);
+    padding: 0 46px;
+    font-size: 0.96rem;
+    font-weight: 600;
+    transition: var(--speed);
+  }
+
+  .search-field input::placeholder {
+    color: #697892;
+  }
+
+  .search-field input:focus {
+    border-color: rgba(6, 182, 212, 0.52);
+    background: rgba(15, 23, 42, 0.98);
+    box-shadow: 0 0 0 5px rgba(6, 182, 212, 0.11), var(--glow-cyan);
+  }
+
+  .clear-search {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 34px;
+    height: 34px;
+    border-radius: 12px;
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    display: none;
+    place-items: center;
+    transition: var(--speed);
+  }
+
+  .clear-search:hover {
+    background: rgba(148, 163, 184, 0.13);
+    color: var(--text);
+  }
+
+  .clear-search.visible {
+    display: grid;
+  }
+
+  .filters {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    overflow-x: auto;
+    padding-bottom: 1px;
+  }
+
+  .filter-btn {
+    height: 50px;
+    white-space: nowrap;
+    border-radius: 16px;
+    border: 1px solid var(--line);
+    background: rgba(15, 23, 42, 0.78);
+    color: var(--text-soft);
+    padding: 0 16px;
+    font-size: 0.88rem;
+    font-weight: 800;
+    cursor: pointer;
+    transition: var(--speed);
+  }
+
+  .filter-btn:hover {
+    border-color: rgba(6, 182, 212, 0.44);
+    color: #cffafe;
+    background: rgba(6, 182, 212, 0.08);
+  }
+
+  .filter-btn.active {
+    border-color: transparent;
+    background: linear-gradient(135deg, var(--brand), var(--brand-2));
+    color: #fff;
+    box-shadow: 0 14px 34px rgba(124, 58, 237, 0.35), 0 0 28px rgba(6, 182, 212, 0.25);
+  }
+
+  main {
+    padding-bottom: 72px;
+  }
+
+  .section {
+    margin-bottom: 42px;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 18px;
+    margin-bottom: 16px;
+  }
+
+  .section-title-wrap {
+    min-width: 0;
+  }
+
+  .section-kicker {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #67e8f9;
+    font-size: 0.76rem;
+    font-weight: 850;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .section-title {
+    margin-top: 6px;
+    font-size: clamp(1.38rem, 3vw, 2.08rem);
+    line-height: 1.15;
+    letter-spacing: -0.05em;
+    font-weight: 850;
+  }
+
+  .section-count {
+    flex-shrink: 0;
+    border: 1px solid rgba(6, 182, 212, 0.2);
+    border-radius: 999px;
+    background: rgba(6, 182, 212, 0.08);
+    color: #a5f3fc;
+    padding: 9px 13px;
+    font-size: 0.8rem;
+    font-weight: 850;
+  }
+
+  .subfolder-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 24px 0 14px;
+    color: #fbcfe8;
+    font-size: 0.82rem;
+    font-weight: 850;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .subfolder-title::after {
+    content: "";
+    height: 1px;
+    flex: 1;
+    background: linear-gradient(90deg, rgba(236, 72, 153, 0.4), transparent);
+  }
+
+  .document-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(235px, 1fr));
+    gap: 18px;
+  }
+
+  .doc-card {
+    position: relative;
+    overflow: hidden;
+    min-height: 342px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-xl);
+    background:
+      linear-gradient(180deg, rgba(15, 23, 42, 0.92), rgba(15, 23, 42, 0.72)),
+      radial-gradient(circle at top left, rgba(124, 58, 237, 0.12), transparent 15rem);
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.24);
+    cursor: pointer;
+    transition: transform var(--speed), box-shadow var(--speed), border-color var(--speed), background var(--speed);
+  }
+
+  .doc-card::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    border-radius: inherit;
+    background: linear-gradient(135deg, rgba(255,255,255,0.12), transparent 28%, transparent 72%, rgba(6, 182, 212, 0.08));
+    opacity: 0;
+    transition: var(--speed);
+  }
+
+  .doc-card:hover {
+    transform: translateY(-7px);
+    border-color: rgba(6, 182, 212, 0.36);
+    background:
+      linear-gradient(180deg, rgba(23, 32, 51, 0.98), rgba(15, 23, 42, 0.86)),
+      radial-gradient(circle at top left, rgba(124, 58, 237, 0.2), transparent 15rem);
+    box-shadow: var(--shadow-md), var(--glow-cyan);
+  }
+
+  .doc-card:hover::after {
+    opacity: 1;
+  }
+
+  .doc-card:focus-visible {
+    outline: 4px solid rgba(6, 182, 212, 0.18);
+    border-color: var(--brand-2);
+  }
+
+  .preview-shell {
+    position: relative;
+    height: 212px;
+    overflow: hidden;
+    background:
+      radial-gradient(circle at 50% 20%, rgba(6, 182, 212, 0.12), transparent 14rem),
+      linear-gradient(135deg, rgba(124, 58, 237, 0.12), rgba(6, 182, 212, 0.08)),
+      #0b1020;
+  }
+
+  .preview-canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transform: scale(1.02);
+    transition: opacity 280ms ease, transform 280ms ease, filter 280ms ease;
+    filter: saturate(0.92) contrast(1.04);
+  }
+
+  .doc-card.preview-ready .preview-canvas {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .doc-card:hover .preview-canvas {
+    filter: saturate(1.08) contrast(1.08);
+  }
+
+  .preview-loader,
+  .preview-fallback {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    padding: 22px;
+    text-align: center;
+    color: var(--muted);
+  }
+
+  .preview-loader-inner,
+  .preview-fallback-inner {
+    display: grid;
+    justify-items: center;
+    gap: 10px;
+  }
+
+  .spinner {
+    width: 30px;
+    height: 30px;
+    border: 3px solid rgba(6, 182, 212, 0.14);
+    border-top-color: var(--brand-2);
+    border-radius: 50%;
+    animation: spin 0.85s linear infinite;
+    box-shadow: 0 0 22px rgba(6, 182, 212, 0.25);
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  .doc-card.preview-ready .preview-loader,
+  .doc-card.preview-error .preview-loader {
+    display: none;
+  }
+
+  .preview-fallback {
+    display: none;
+  }
+
+  .doc-card.preview-error .preview-fallback {
+    display: grid;
+  }
+
+  .preview-fallback svg {
+    width: 46px;
+    height: 46px;
+    color: #64748b;
+  }
+
+  .preview-fallback span,
+  .preview-loader span {
+    font-size: 0.76rem;
+    font-weight: 850;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .preview-gradient {
+    position: absolute;
+    inset: auto 0 0;
+    height: 72px;
+    background: linear-gradient(180deg, transparent, rgba(15, 23, 42, 0.96));
+    pointer-events: none;
+  }
+
+  .open-chip {
+    position: absolute;
+    right: 12px;
+    top: 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    border-radius: 999px;
+    background: rgba(2, 6, 23, 0.78);
+    border: 1px solid rgba(255,255,255,0.12);
+    color: #fff;
+    padding: 8px 10px;
+    font-size: 0.76rem;
+    font-weight: 850;
+    opacity: 0;
+    transform: translateY(-6px);
+    transition: var(--speed);
+    backdrop-filter: blur(10px);
+  }
+
+  .doc-card:hover .open-chip {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .card-body {
+    padding: 16px 16px 18px;
+  }
+
+  .badge-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+
+  .type-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border-radius: 999px;
+    background: rgba(124, 58, 237, 0.15);
+    border: 1px solid rgba(124, 58, 237, 0.28);
+    color: #ddd6fe;
+    padding: 6px 9px;
+    font-size: 0.69rem;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .doc-index {
+    color: #64748b;
+    font-size: 0.75rem;
+    font-weight: 850;
+  }
+
+  .doc-title {
+    color: var(--text);
+    font-size: 1rem;
+    line-height: 1.35;
+    font-weight: 850;
+    letter-spacing: -0.025em;
+  }
+
+  .doc-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 12px;
+    color: var(--muted);
+    font-size: 0.82rem;
+    font-weight: 700;
+  }
+
+  .doc-meta svg {
+    flex-shrink: 0;
+    color: var(--brand-2);
+  }
+
+  .card-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+    margin-top: 14px;
+  }
+
+  .text-btn {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    min-height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border-radius: 14px;
+    border: 1px solid rgba(6, 182, 212, 0.22);
+    background: rgba(6, 182, 212, 0.09);
+    color: #a5f3fc;
+    padding: 9px 11px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-weight: 850;
+    transition: var(--speed);
+  }
+
+  .text-btn:hover {
+    border-color: rgba(6, 182, 212, 0.52);
+    background: rgba(6, 182, 212, 0.17);
+    color: #fff;
+    box-shadow: 0 0 24px rgba(6, 182, 212, 0.16);
+  }
+
+  .text-btn.secondary {
+    border-color: rgba(249, 115, 22, 0.24);
+    background: rgba(249, 115, 22, 0.09);
+    color: #fed7aa;
+  }
+
+  .text-btn.secondary:hover {
+    border-color: rgba(249, 115, 22, 0.52);
+    background: rgba(249, 115, 22, 0.16);
+    color: #fff;
+    box-shadow: 0 0 24px rgba(249, 115, 22, 0.14);
+  }
+
+  .pair-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 9px;
+    color: #94a3b8;
+    font-size: 0.74rem;
+    font-weight: 750;
+  }
+
+  .pair-label::before {
+    content: "";
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--brand-2), var(--brand-3));
+    box-shadow: 0 0 14px rgba(6, 182, 212, 0.38);
+  }
+
+  .hidden {
+    display: none !important;
+  }
+
+  .empty-state {
+    display: none;
+    margin: 30px 0 80px;
+    border: 1px dashed rgba(148, 163, 184, 0.24);
+    border-radius: 28px;
+    background: rgba(15, 23, 42, 0.58);
+    padding: 42px 22px;
+    text-align: center;
+    color: var(--text-soft);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .empty-state.visible {
+    display: block;
+  }
+
+  .empty-state strong {
+    display: block;
+    color: var(--text);
+    font-size: 1.15rem;
+    margin-bottom: 8px;
+  }
+
+  .modal-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: none;
+    flex-direction: column;
+    background: rgba(2, 6, 23, 0.94);
+    backdrop-filter: blur(14px);
+  }
+
+  .modal-backdrop.open {
+    display: flex;
+    animation: fadeIn 180ms ease;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  .modal-bar {
+    flex-shrink: 0;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto auto auto;
+    align-items: center;
+    gap: 10px;
+    padding: 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(8, 13, 26, 0.9);
+    box-shadow: 0 12px 42px rgba(0,0,0,0.32);
+  }
+
+  .modal-title-wrap {
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .modal-file-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 15px;
+    display: grid;
+    place-items: center;
+    background: linear-gradient(135deg, var(--brand), var(--brand-2));
+    color: #fff;
+    flex-shrink: 0;
+    box-shadow: 0 0 28px rgba(6, 182, 212, 0.26);
+  }
+
+  .modal-title {
+    min-width: 0;
+    color: #fff;
+    font-size: 0.98rem;
+    font-weight: 850;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  .modal-folder {
+    margin-top: 3px;
+    color: rgba(226, 232, 240, 0.62);
+    font-size: 0.76rem;
+    font-weight: 750;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  .modal-btn {
+    height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border-radius: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.13);
+    background: rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.9);
+    padding: 0 13px;
+    text-decoration: none;
+    cursor: pointer;
+    font-size: 0.84rem;
+    font-weight: 850;
+    transition: var(--speed);
+  }
+
+  .modal-btn:hover {
+    background: rgba(255, 255, 255, 0.16);
+    border-color: rgba(255, 255, 255, 0.22);
+    color: #fff;
+  }
+
+  .modal-btn.primary {
+    background: linear-gradient(135deg, var(--brand), var(--brand-2));
+    color: #fff;
+    border-color: transparent;
+    box-shadow: 0 14px 32px rgba(124, 58, 237, 0.25);
+  }
+
+  .modal-btn.primary:hover {
+    filter: brightness(1.08);
+  }
+
+  .modal-viewer {
+    position: relative;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .modal-viewer iframe {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    display: block;
+    background: #111827;
+  }
+
+  .modal-fallback {
+    height: 100%;
+    display: grid;
+    place-items: center;
+    padding: 28px;
+    text-align: center;
+    color: rgba(255, 255, 255, 0.72);
+  }
+
+  .modal-fallback-card {
+    width: min(440px, 100%);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 24px;
+    background: rgba(15, 23, 42, 0.72);
+    padding: 28px;
+    box-shadow: var(--shadow-md);
+  }
+
+  .modal-fallback-card svg {
+    width: 54px;
+    height: 54px;
+    margin-bottom: 14px;
+    color: rgba(255, 255, 255, 0.5);
+  }
+
+  .modal-fallback-card p {
+    line-height: 1.65;
+  }
+
+  .modal-fallback-card a {
+    margin-top: 18px;
+  }
+
+  @media (max-width: 860px) {
+    .app-shell {
+      width: min(100% - 20px, 1500px);
+    }
+
+    .hero {
+      padding-top: 18px;
+    }
+
+    .hero-panel {
+      border-radius: 24px;
+    }
+
+    .hero-top {
+      flex-direction: column;
+    }
+
+    .hero-stats {
+      width: 100%;
+    }
+
+    .toolbar {
+      position: static;
+      grid-template-columns: 1fr;
+      border-radius: 20px;
+    }
+
+    .filters {
+      padding-bottom: 4px;
+    }
+
+    .document-grid {
+      grid-template-columns: repeat(auto-fill, minmax(174px, 1fr));
+      gap: 12px;
+    }
+
+    .doc-card {
+      min-height: 302px;
+      border-radius: 20px;
+    }
+
+    .preview-shell {
+      height: 180px;
+    }
+
+    .modal-bar {
+      grid-template-columns: 1fr auto;
+    }
+
+    .modal-btn span {
+      display: none;
+    }
+
+    .modal-btn {
+      width: 42px;
+      padding: 0;
+    }
+
+    .modal-btn.primary {
+      width: 42px;
+    }
+  }
+
+  @media (max-width: 520px) {
+    .hero-stats {
+      grid-template-columns: 1fr;
+    }
+
+    .section-header {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+
+    .section-count {
+      align-self: flex-start;
+    }
+
+    .document-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .preview-shell {
+      height: 150px;
+    }
+
+    .card-body {
+      padding: 13px;
+    }
+
+    .doc-title {
+      font-size: 0.9rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      scroll-behavior: auto !important;
+      transition-duration: 0.001ms !important;
+    }
+  }
+
+  ::selection {
+    background: rgba(6, 182, 212, 0.28);
+    color: #fff;
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: rgba(148, 163, 184, 0.24);
+    border: 3px solid transparent;
+    border-radius: 999px;
+    background-clip: content-box;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(6, 182, 212, 0.5);
+    border: 3px solid transparent;
+    background-clip: content-box;
+  }
+</style>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="hero">
+      <div class="hero-panel">
+        <div class="hero-top">
+          <div>
+            <div class="eyebrow"><span class="eyebrow-dot"></span> Analyses & textes</div>
+            <h1>Bibliothèque de documents</h1>
+            <p class="hero-sub">Une interface propre, rapide et moderne pour retrouver tes PDF, les prévisualiser vraiment, puis les lire en plein écran sans changer ton lecteur actuel.</p>
+          </div>
+
+          <div class="hero-stats" aria-label="Statistiques de la bibliothèque">
+            <div class="stat-card">
+              <span class="stat-value" id="statDocuments">0</span>
+              <span class="stat-label">documents</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-value" id="statFolders">0</span>
+              <span class="stat-label">dossiers</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-value">PDF</span>
+              <span class="stat-label">preview réelle</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <section class="toolbar" aria-label="Recherche et filtres">
+      <div class="search-field">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="11" cy="11" r="8"></circle>
+          <path d="m21 21-4.35-4.35"></path>
+        </svg>
+        <input type="search" id="searchInput" placeholder="Rechercher un titre, un dossier, un fichier…" autocomplete="off" />
+        <button class="clear-search" id="clearSearch" type="button" aria-label="Effacer la recherche">
+          <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M18 6 6 18M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+
+      <div class="filters" id="filters" aria-label="Filtres par dossier"></div>
+    </section>
+
+    <main id="library"></main>
+
+    <div class="empty-state" id="emptyState">
+      <strong>Aucun document trouvé</strong>
+      <p>Essaie un autre mot-clé ou repasse sur tous les dossiers.</p>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="modal" role="dialog" aria-modal="true" aria-label="Lecteur PDF">
+    <div class="modal-bar">
+      <div class="modal-title-wrap">
+        <div class="modal-file-icon" aria-hidden="true">
+          <svg width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <path d="M14 2v6h6"></path>
+          </svg>
+        </div>
+        <div>
+          <p class="modal-title" id="modalTitle">Document</p>
+          <p class="modal-folder" id="modalFolder">Dossier</p>
+        </div>
+      </div>
+
+      <a class="modal-btn primary" id="modalOpenBtn" href="#" target="_blank" rel="noopener" title="Ouvrir dans un nouvel onglet">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+          <path d="M15 3h6v6"></path>
+          <path d="M10 14 21 3"></path>
+        </svg>
+        <span>Ouvrir</span>
+      </a>
+
+      <button class="modal-btn" id="modalClose" type="button" aria-label="Fermer le lecteur">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M18 6 6 18M6 6l12 12"></path>
+        </svg>
+        <span>Fermer</span>
+      </button>
+    </div>
+
+    <div class="modal-viewer" id="modalViewer"></div>
+  </div>
+
+<script>
+  // Ne touche pas au système de lecture PDF : la modale garde l'iframe natif.
+  // La vraie preview des cartes est faite à part avec PDF.js.
+
+  if (window.pdfjsLib) {
+    pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+  }
+
+  const libraryData = [
+    {
+      id: "badine",
+      title: "On ne badine pas avec l'amour",
+      filter: "Badine pas",
+      groups: [
+        {
+          label: null,
+          items: [
+            { title: "Acte 2 scène 5", analysisSrc: "/Badine_pas/An_badine_a2_s5.pdf", textSrc: "Badine_pas/Txt_badine_a2_s5.pdf" },
+            { title: "Acte 3 scène 3", analysisSrc: "Badine_pas/An_badine_a3_s3.pdf", textSrc: "Badine_pas/Txt_badine_a3_s3.pdf" },
+            { title: "Acte 3 scène 6", analysisSrc: "Badine_pas/An_badine_a3_s6.pdf", textSrc: "Badine_pas/Txt_badine_a3_s6.pdf" },
+            { title: "Acte 3 scène 8", analysisSrc: "Badine_pas/An_badine_a3_s8.pdf", textSrc: "Badine_pas/Txt_badine_a3_s8.pdf" }
+          ]
+        }
+      ]
+    },
+    {
+      id: "discours",
+      title: "Discours de la servitude volontaire",
+      filter: "Discours servitude",
+      groups: [
+        {
+          label: null,
+          items: [
+            { title: "Cyrus et les Lydiens", analysisSrc: "Discours_servitude_volontaire/An_cyrus_et_des_lydiens.pdf", textSrc: "Discours_servitude_volontaire/Txt_cyrus_et_des_lydiens.pdf" },
+            { title: "L'adresse au peuple", analysisSrc: "Discours_servitude_volontaire/An_ladresse_au_peuple.pdf", textSrc: "Discours_servitude_volontaire/Txt_ladresse_au_peuple.pdf" },
+            { title: "Lettres persanes XIV", analysisSrc: "Discours_servitude_volontaire/An_lettres_persanes_xiv.pdf", textSrc: "Discours_servitude_volontaire/Txt_lettres_persanes_xiv.pdf" },
+            { title: "Péroraison du discours", analysisSrc: "Discours_servitude_volontaire/An_peroraison_du_discours.pdf", textSrc: "Discours_servitude_volontaire/Txt_peroraison_du_discours.pdf" }
+          ]
+        },
+        {
+          label: "autre_avec",
+          items: [
+            { title: "Le loup et le chien", analysisSrc: "Discours_servitude_volontaire/autre_avec/An_le_loup_et_le_chien.pdf", textSrc: "Discours_servitude_volontaire/autre_avec/Txt_le_loup_et_le_chien.pdf", tag: "PDF · autre_avec" }
+          ]
+        }
+      ]
+    },
+    {
+      id: "manon",
+      title: "Manon Lescaut",
+      filter: "Manon Lescaut",
+      groups: [
+        {
+          label: null,
+          items: [
+            { title: "Évasion Saint-Lazare", analysisSrc: "Manon_lescaut/An_evasion_saint-lazare.pdf", textSrc: "Manon_lescaut/Txt_evasion_saint-lazare.pdf" },
+            { title: "L'arrestation de Vautrin", analysisSrc: "Manon_lescaut/An_larrestation_de_vautrin.pdf", textSrc: "Manon_lescaut/Txt_larrestation_de_vautrin.pdf" },
+            { title: "Machination contre G.M", analysisSrc: "Manon_lescaut/An_machination_contre_G.M.pdf", textSrc: "Manon_lescaut/Txt_machination_contre_G.M.pdf" },
+            { title: "Rencontre Des Grieux et Manon", analysisSrc: "Manon_lescaut/An_rencontre_des_grieux_et_manon.pdf", textSrc: "Manon_lescaut/Txt_rencontre_des_grieux_et_manon.pdf" }
+          ]
+        }
+      ]
+    }
+  ];
+
+  const icons = {
+    folder: `<svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h5l2 2h7a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z"></path></svg>`,
+    file: `<svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><path d="M14 2v6h6"></path></svg>`,
+    text: `<svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 6h8M8 10h8M8 14h5"></path><path d="M5 3h14a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"></path></svg>`,
+    open: `<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 3h6v6"></path><path d="M10 14 21 3"></path><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path></svg>`,
+    pdf: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><path d="M14 2v6h6"></path><path d="M8 13h8M8 17h5"></path></svg>`
+  };
+
+  const library = document.getElementById("library");
+  const filters = document.getElementById("filters");
+  const searchInput = document.getElementById("searchInput");
+  const clearSearch = document.getElementById("clearSearch");
+  const emptyState = document.getElementById("emptyState");
+  const modal = document.getElementById("modal");
+  const modalTitle = document.getElementById("modalTitle");
+  const modalFolder = document.getElementById("modalFolder");
+  const modalViewer = document.getElementById("modalViewer");
+  const modalOpenBtn = document.getElementById("modalOpenBtn");
+  const modalClose = document.getElementById("modalClose");
+
+  let activeFilter = "all";
+  let observer;
+
+  function normalize(text) {
+    return String(text || "")
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[̀-ͯ]/g, "");
+  }
+
+  function countPdfsInSection(section) {
+    return section.groups.reduce((total, group) => {
+      return total + group.items.reduce((sum, item) => sum + (item.analysisSrc ? 1 : 0) + (item.textSrc ? 1 : 0), 0);
+    }, 0);
+  }
+
+  function countCardsInSection(section) {
+    return section.groups.reduce((total, group) => total + group.items.length, 0);
+  }
+
+  function getTotalPdfCount() {
+    return libraryData.reduce((total, section) => total + countPdfsInSection(section), 0);
+  }
+
+  function renderStats() {
+    document.getElementById("statDocuments").textContent = getTotalPdfCount();
+    document.getElementById("statFolders").textContent = libraryData.length;
+  }
+
+  function renderFilters() {
+    const buttons = [
+      { label: "Tous", value: "all" },
+      ...libraryData.map(section => ({ label: section.title, value: section.filter }))
+    ];
+
+    filters.innerHTML = buttons.map(button => `
+      <button class="filter-btn ${button.value === activeFilter ? "active" : ""}" type="button" data-filter="${button.value}">
+        ${button.label}
+      </button>
+    `).join("");
+
+    filters.querySelectorAll(".filter-btn").forEach(button => {
+      button.addEventListener("click", () => {
+        activeFilter = button.dataset.filter;
+        renderFilters();
+        applyFilters();
+      });
+    });
+  }
+
+  function renderLibrary() {
+    let cardIndex = 1;
+
+    library.innerHTML = libraryData.map(section => {
+      const cardsCount = countCardsInSection(section);
+      const pdfCount = countPdfsInSection(section);
+
+      const groupsHtml = section.groups.map(group => {
+        const titleHtml = group.label ? `<div class="subfolder-title">${icons.folder} Sous-dossier : ${group.label}</div>` : "";
+        const cardsHtml = group.items.map(item => {
+          const index = String(cardIndex++).padStart(2, "0");
+          const analysisTitle = `Analyse — ${item.title}`;
+          const textTitle = `Texte — ${item.title}`;
+          const searchText = normalize(`${item.title} analyse texte ${item.analysisSrc} ${item.textSrc || ""} ${section.title} ${section.filter} ${group.label || ""}`);
+          const tag = item.tag || "Analyse PDF";
+          const textButton = item.textSrc ? `
+            <button class="text-btn secondary" type="button" data-text-src="${escapeHtml(item.textSrc)}" data-text-title="${escapeHtml(textTitle)}" data-folder="${escapeHtml(section.title)}">
+              ${icons.text} Voir le texte associé
+            </button>
+          ` : "";
+
+          return `
+            <article class="doc-card" tabindex="0" role="button" aria-label="Ouvrir ${escapeHtml(analysisTitle)}" data-title="${escapeHtml(analysisTitle)}" data-src="${escapeHtml(item.analysisSrc)}" data-folder="${escapeHtml(section.filter)}" data-section="${escapeHtml(section.title)}" data-search="${escapeHtml(searchText)}">
+              <div class="preview-shell">
+                <canvas class="preview-canvas" aria-hidden="true"></canvas>
+                <div class="preview-loader"><div class="preview-loader-inner"><div class="spinner"></div><span>Preview</span></div></div>
+                <div class="preview-fallback"><div class="preview-fallback-inner">${icons.pdf}<span>PDF</span></div></div>
+                <div class="preview-gradient"></div>
+                <div class="open-chip">${icons.open} Lire l'analyse</div>
+              </div>
+              <div class="card-body">
+                <div class="badge-row">
+                  <span class="type-badge">${icons.file} ${tag}</span>
+                  <span class="doc-index">${index}</span>
+                </div>
+                <h3 class="doc-title">${item.title}</h3>
+                <p class="doc-meta">${icons.folder} ${section.title}</p>
+                ${item.textSrc ? `<span class="pair-label">Texte relié à cette analyse</span>` : ""}
+                <div class="card-actions">${textButton}</div>
+              </div>
+            </article>
+          `;
+        }).join("");
+
+        return `${titleHtml}<div class="document-grid">${cardsHtml}</div>`;
+      }).join("");
+
+      return `
+        <section class="section" data-folder="${escapeHtml(section.filter)}">
+          <div class="section-header">
+            <div class="section-title-wrap">
+              <p class="section-kicker">${icons.folder} Dossier</p>
+              <h2 class="section-title">${section.title}</h2>
+            </div>
+            <span class="section-count" data-count data-cards="${cardsCount}" data-pdfs="${pdfCount}">${cardsCount} analyses · ${pdfCount} PDF</span>
+          </div>
+          ${groupsHtml}
+        </section>
+      `;
+    }).join("");
+
+    library.querySelectorAll(".doc-card").forEach(card => {
+      card.addEventListener("click", () => openPDF(card.dataset.src, card.dataset.title, card.dataset.section));
+      card.addEventListener("keydown", event => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          openPDF(card.dataset.src, card.dataset.title, card.dataset.section);
+        }
+      });
+    });
+
+    library.querySelectorAll(".text-btn").forEach(button => {
+      button.addEventListener("click", event => {
+        event.stopPropagation();
+        openPDF(button.dataset.textSrc, button.dataset.textTitle, button.dataset.folder);
+      });
+    });
+  }
+
+  function escapeHtml(value) {
+    return String(value)
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
+  }
+
+  function applyFilters() {
+    const q = normalize(searchInput.value.trim());
+    let totalVisible = 0;
+
+    clearSearch.classList.toggle("visible", Boolean(q));
+
+    document.querySelectorAll(".section").forEach(section => {
+      const folder = section.dataset.folder;
+      const folderAllowed = activeFilter === "all" || activeFilter === folder;
+      let visibleCards = 0;
+      let visiblePdfs = 0;
+
+      section.querySelectorAll(".doc-card").forEach(card => {
+        const matchQuery = !q || card.dataset.search.includes(q);
+        const visible = folderAllowed && matchQuery;
+        card.classList.toggle("hidden", !visible);
+        if (visible) {
+          visibleCards++;
+          visiblePdfs += card.querySelector(".text-btn") ? 2 : 1;
+          totalVisible++;
+        }
+      });
+
+      section.classList.toggle("hidden", visibleCards === 0);
+      const count = section.querySelector("[data-count]");
+      if (count) count.textContent = `${visibleCards} analyse${visibleCards > 1 ? "s" : ""} · ${visiblePdfs} PDF`;
+    });
+
+    emptyState.classList.toggle("visible", totalVisible === 0);
+  }
+
+  function initPreviewObserver() {
+    if (!window.pdfjsLib) {
+      document.querySelectorAll(".doc-card").forEach(card => card.classList.add("preview-error"));
+      return;
+    }
+
+    observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        const card = entry.target;
+        observer.unobserve(card);
+        renderPdfPreview(card);
+      });
+    }, { rootMargin: "260px 0px", threshold: 0.01 });
+
+    document.querySelectorAll(".doc-card").forEach(card => observer.observe(card));
+  }
+
+  async function renderPdfPreview(card) {
+    const src = card.dataset.src;
+    const canvas = card.querySelector(".preview-canvas");
+    const shell = card.querySelector(".preview-shell");
+
+    try {
+      const pdf = await pdfjsLib.getDocument({ url: src }).promise;
+      const page = await pdf.getPage(1);
+      const targetWidth = Math.max(260, shell.clientWidth * window.devicePixelRatio);
+      const baseViewport = page.getViewport({ scale: 1 });
+      const scale = targetWidth / baseViewport.width;
+      const viewport = page.getViewport({ scale });
+      const context = canvas.getContext("2d", { alpha: false });
+
+      canvas.width = Math.floor(viewport.width);
+      canvas.height = Math.floor(viewport.height);
+      canvas.style.width = "100%";
+      canvas.style.height = "100%";
+
+      await page.render({ canvasContext: context, viewport }).promise;
+      card.classList.add("preview-ready");
+    } catch (error) {
+      card.classList.add("preview-error");
+      console.warn("Preview PDF impossible :", src, error);
+    }
+  }
+
+  // Viewer PDF plein écran : iframe natif conservé.
+  function openPDF(src, title, folder) {
+    modalTitle.textContent = title;
+    modalFolder.textContent = folder;
+    modalOpenBtn.href = src;
+    modalViewer.innerHTML = "";
+
+    const iframe = document.createElement("iframe");
+    iframe.src = src;
+    iframe.title = title;
+    iframe.loading = "eager";
+    iframe.onerror = () => showModalFallback(src);
+
+    modalViewer.appendChild(iframe);
+    modal.classList.add("open");
+    document.body.classList.add("modal-open");
+  }
+
+  function showModalFallback(src) {
+    modalViewer.innerHTML = `
+      <div class="modal-fallback">
+        <div class="modal-fallback-card">
+          ${icons.pdf}
+          <p>Impossible d'afficher ce PDF dans le lecteur intégré. Vérifie que le chemin du fichier est correct, ou ouvre-le directement.</p>
+          <a class="modal-btn primary" href="${escapeHtml(src)}" target="_blank" rel="noopener">${icons.open}<span>Ouvrir le PDF</span></a>
+        </div>
+      </div>
+    `;
+  }
+
+  function closePDF() {
+    modal.classList.remove("open");
+    document.body.classList.remove("modal-open");
+    setTimeout(() => { modalViewer.innerHTML = ""; }, 180);
+  }
+
+  searchInput.addEventListener("input", applyFilters);
+  clearSearch.addEventListener("click", () => {
+    searchInput.value = "";
+    searchInput.focus();
+    applyFilters();
+  });
+
+  modalClose.addEventListener("click", closePDF);
+  modal.addEventListener("click", event => {
+    if (event.target === modal) closePDF();
+  });
+  document.addEventListener("keydown", event => {
+    if (event.key === "Escape" && modal.classList.contains("open")) closePDF();
+  });
+
+  renderStats();
+  renderFilters();
+  renderLibrary();
+  applyFilters();
+  initPreviewObserver();
+</script>
+</body>
+</html>
